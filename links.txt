@@ -1,0 +1,37 @@
+http://spreadsheets.google.com/a/google.com/tq?key=0Au9l3OyvDQ5odFJHRWMxRnBkN0M2RTFHSFVWX3R5R0E&tq=select%20G%2C%20sum(D)%20group%20by%20G%20order%20by%20G
+
+https://spreadsheets.google.com/feeds/list/0Au9l3OyvDQ5odFJHRWMxRnBkN0M2RTFHSFVWX3R5R0E/1/private/full?sq=previsto==%22almoco%20luis%22
+
+http://spreadsheets.google.com/a/google.com/tq?key=0Au9l3OyvDQ5odFNSVjlEekczdDJLSzlKakYzOFhqSXc&tq=select%20B%2C%20C%20order%20by%20B
+
+
+
+Query SQL:
+http://code.google.com/intl/pt-BR/apis/visualization/documentation/querylanguage.html#Order_By
+
+
+
+Visualization API
+http://code.google.com/intl/pt-BR/apis/visualization/documentation/reference.html#GadgetHelper
+
+http://code.google.com/intl/pt-BR/apis/gadgets/docs/reference.html
+
+
+----
+opera:
+
+barchart:
+http://code.google.com/intl/pt-BR/apis/chart/interactive/docs/gallery/imagebarchart.html
+
+
+
+http://code.google.com/intl/pt-BR/apis/visualization/documentation/reference.html#GadgetHelper
+http://code.google.com/intl/pt-BR/apis/gadgets/docs/remote-content.html#Fetch_Feed
+http://code.google.com/intl/pt-BR/apis/visualization/documentation/using_overview.html
+http://code.google.com/intl/pt-BR/apis/visualization/documentation/gadgetgallery.html
+http://code.google.com/intl/pt-BR/apis/spreadsheets/gadgets/
+http://code.google.com/intl/pt-BR/apis/spreadsheets/data/3.0/reference.html#ListParameters
+http://code.google.com/intl/pt-BR/apis/gadgets/docs/ui.html
+http://code.google.com/intl/pt-BR/apis/spreadsheets/data/3.0/developers_guide.html#SendingStructuredRowQueries
+
+
