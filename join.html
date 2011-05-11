@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>request gg</title>
+		<script src="http://www.google.com/jsapi" type="text/javascript"></script>
+<script type="text/javascript">
+
+google.load("visualization", "1", {packages:["imagebarchart"]});
+google.setOnLoadCallback(inicioExecucao);
+var gadgetHelper = null;
+
+var urlGoogle = "http://spreadsheets.google.com/a/google.com/tq";
+	
+var keyFatura = "0Au9l3OyvDQ5odFJHRWMxRnBkN0M2RTFHSFVWX3R5R0E";
+var queryFatura = "select%20G%2C%20sum(D)%20group%20by%20G%20order%20by%20G";
+
+var keyCategoria = "0Au9l3OyvDQ5odFNSVjlEekczdDJLSzlKakYzOFhqSXc";
+var queryCategoria = "select%20B%2C%20C%20order%20by%20B";
+
+function inicioExecucao(){
+	var dbFatura = null;
+	var dbCategoria = null; 
+
+	gadgetHelper = new google.visualization.GadgetHelper();
+	
+	sendQuery(urlGoogle+"?key="+keyFatura+"&tq="+queryFatura, handleFaturaResponse);
+}
+
+function handleFaturaResponse(response) {
+	if (!gadgetHelper.validateResponse(response)) return;
+	dbFatura = response.getDataTable();
+	
+	sendQuery(urlGoogle+"?key="+keyCategoria+"&tq="+queryCategoria, handleCategoriaResponse);
+}
+
+function handleCategoriaResponse(response) {
+	if (!gadgetHelper.validateResponse(response)) return;
+	dbCategoria = response.getDataTable();
+	
+	/* Faz o Join */
+	var dtResult = new google.visualization.data.join(dbFatura, dbCategoria, 'left', [[0,0]], [1], [1]);
+	
+	/* Cria o Grafico */
+	var chart = new google.visualization.ImageBarChart(document.getElementById('tablediv1'));
+    
+	/* Exibe o Grafico */
+	chart.draw(dtResult, {width: 400, height: 240, min: 0, isStacked: false});
+		
+//	imprimirTabela(dtResult, 'tablediv1');
+	
+//	imprimirTabela(dbFatura, 'tablediv1');
+//	imprimirTabela(dbCategoria, 'tablediv2');
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+
+function sendQuery(url, callback) {
+  var query = new google.visualization.Query(url);
+  query.send(callback);
+}
+
+function imprimirTabela(data, target){
+  var html = [];   // start the HTML output string
+  html.push('<table>');
+  
+  /** Process all Rows in the specified range*/
+  for (var row = 0; row < data.getNumberOfRows(); row++) {
+	html.push('<tr>');
+    /** Process the Columns in each Row */
+    for (var col = 0; col < data.getNumberOfColumns(); col++) {
+	  html.push('<td>');
+      var formattedValue = data.getFormattedValue(row, col);
+      html.push(formattedValue);
+      html.push('</td>');
+    }
+	html.push('</tr>');
+  }
+  html.push('</table>');
+
+  /**
+   * Set the generated html into the container div.
+   */
+  var tableDiv = document.getElementById(target);
+  tableDiv.innerHTML = html.join('');
+}
+
+
+</script>
+    </head>
+    <body>
+
+	<div id="tablediv1" style="overflow: auto;"><img src="http://www.google.com/ig/images/spinner.gif" /></div>
+	<!-- div id="tablediv2" style="overflow: auto;"><img src="http://www.google.com/ig/images/spinner.gif" /></div-->
+
+    </body>
+</html>
+
