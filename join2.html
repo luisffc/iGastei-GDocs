@@ -7,14 +7,16 @@
 		<script src="http://www.google.com/jsapi" type="text/javascript"></script>
 <script type="text/javascript">
 
-google.load("visualization", "1", {packages:["imagebarchart"]});
+google.load("visualization", "1", {packages:["imagebarchart","table"]});
 google.setOnLoadCallback(inicioExecucao);
 var gadgetHelper = null;
 
 var urlGoogle = "http://spreadsheets.google.com/a/google.com/tq";
 	
 var keyFatura = "0Au9l3OyvDQ5odFJHRWMxRnBkN0M2RTFHSFVWX3R5R0E";
-var queryFatura = "select G, sum(D) group by G order by G";
+var queryFatura = "select G, D, I "+
+				  "where year(I) = year(now()) and month(I) = month(now())+1"+
+				  "format I 'MMM/yyyy'";
 
 var keyCategoria = "0Au9l3OyvDQ5odFNSVjlEekczdDJLSzlKakYzOFhqSXc";
 var queryCategoria = "select B, C order by B";
@@ -25,14 +27,18 @@ function inicioExecucao(){
 
 	gadgetHelper = new google.visualization.GadgetHelper();
 	
-	sendQuery(urlGoogle+"?key="+keyFatura+"&tq="+queryFatura, handleFaturaResponse);
+	sendQuery(urlGoogle+"?key="+keyFatura, queryFatura, handleFaturaResponse);
 }
 
 function handleFaturaResponse(response) {
 	if (!gadgetHelper.validateResponse(response)) return;
 	dbFatura = response.getDataTable();
 	
-	sendQuery(urlGoogle+"?key="+keyCategoria+"&tq="+queryCategoria, handleCategoriaResponse);
+	var view = new google.visualization.DataView(dbFatura);
+	var table = new google.visualization.Table(document.getElementById('tablediv1'));
+	table.draw(view, {sortColumn: 1});
+	
+	//sendQuery(urlGoogle+"?key="+keyCategoria+"&tq="+queryCategoria, handleCategoriaResponse);
 }
 
 function handleCategoriaResponse(response) {
@@ -63,7 +69,7 @@ function sendQuery(url, strQuery, callback) {
     <body>
 
 	<div id="tablediv1" style="overflow: auto;"><img src="http://www.google.com/ig/images/spinner.gif" /></div>
-	<div id="tablediv2" style="overflow: auto;"><img src="http://www.google.com/ig/images/spinner.gif" /></div>
+	<!--div id="tablediv2" style="overflow: auto;"><img src="http://www.google.com/ig/images/spinner.gif" /></div-->
 
     </body>
 </html>
