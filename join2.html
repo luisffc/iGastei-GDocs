@@ -11,34 +11,56 @@ google.load("visualization", "1", {packages:["imagebarchart","table"]});
 google.setOnLoadCallback(inicioExecucao);
 var gadgetHelper = null;
 
-var urlGoogle = "http://spreadsheets.google.com/a/google.com/tq";
-	
 var keyFatura = "0Au9l3OyvDQ5odFJHRWMxRnBkN0M2RTFHSFVWX3R5R0E";
-var queryFatura = "select G, D, I "+
-				  "where year(I) = year(now()) and month(I) = month(now())+1"+
-				  "format I 'MMM/yyyy'";
-
 var keyCategoria = "0Au9l3OyvDQ5odFNSVjlEekczdDJLSzlKakYzOFhqSXc";
-var queryCategoria = "select B, C order by B";
 
+var gastosFaturaProximoMes =
+	"select H, D, I "+
+	"where year(I) = year(now()) and month(I) = month(now())+1 "+
+	"label D 'Valor' "+
+	"format I 'MMM/yyyy', D '#,##0.00'";
+
+var categEValorFaturaMesAtual =
+	"select H, sum(D) "+
+	"where year(I) = year(now()) and month(I) = month(now()) "+
+	"group by H "+
+	"label sum(D) 'Gasto' "+
+	"format sum(D) '#,##0.00'";
+
+var categEValorFaturaProximoMes =
+	"select H, sum(D) "+
+	"where year(I) = year(now()) and month(I) = month(now())+1 "+
+	"group by H "+
+	"label sum(D) 'Gasto' "+
+	"format sum(D) '#,##0.00'";
+	
+var categEValorCategoriaMesCompleto = 
+	"select B, C order by B "+
+	"label C 'Limite' "+
+	"format C '#,##0.00'";
+
+var categEValorCategoriaDiasCorridos = 
+	"select B, C*(day(now())/30) "+
+	"order by B "+
+	"label C*(day(now())/30) 'Limite' "+
+	"format C*(day(now())/30) '#,##0.00'";
+	
 function inicioExecucao(){
 	var dbFatura = null;
 	var dbCategoria = null; 
 
 	gadgetHelper = new google.visualization.GadgetHelper();
 	
-	sendQuery(urlGoogle+"?key="+keyFatura, queryFatura, handleFaturaResponse);
+	sendQuery(keyFatura, categEValorFaturaProximoMes, handleFaturaResponse);
 }
 
 function handleFaturaResponse(response) {
 	if (!gadgetHelper.validateResponse(response)) return;
 	dbFatura = response.getDataTable();
 	
-	var view = new google.visualization.DataView(dbFatura);
-	var table = new google.visualization.Table(document.getElementById('tablediv1'));
-	table.draw(view, {sortColumn: 1});
+//	desenhaTabela(dbFatura, 'tablediv1');
 	
-	//sendQuery(urlGoogle+"?key="+keyCategoria+"&tq="+queryCategoria, handleCategoriaResponse);
+	sendQuery(keyCategoria, categEValorCategoriaDiasCorridos, handleCategoriaResponse);
 }
 
 function handleCategoriaResponse(response) {
@@ -54,12 +76,28 @@ function handleCategoriaResponse(response) {
 	/* Exibe o Grafico */
 	chart.draw(dtResult, {width: 400, height: 240, min: 0, isStacked: false});
 	
+//	desenhaTabela(dtResult, 'tablediv1');
+	
 }
 
 //////////////////////////////////////////////////////////////////////////////////
 
-function sendQuery(url, strQuery, callback) {
-  var query = new google.visualization.Query(url);
+function desenhaTabela(data, div){
+	desenhaTabela(data, div, {sortColumn: 1});
+}
+
+function desenhaTabela(data, div, sort){
+	if (sort == null){
+		sort = {sortColumn: 1};
+	}
+	var view = new google.visualization.DataView(data);
+	var table = new google.visualization.Table(document.getElementById(div));
+	table.draw(view, sort);
+}
+
+function sendQuery(key, strQuery, callback) {
+  var urlGoogle = "http://spreadsheets.google.com/a/google.com/tq";
+  var query = new google.visualization.Query(urlGoogle+"?key="+key);
   query.setQuery(strQuery);
   query.send(callback);
 }
