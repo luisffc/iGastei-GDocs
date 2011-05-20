@@ -18,7 +18,7 @@ function inicioExecucao(){
 
 	gadgetHelper = new google.visualization.GadgetHelper();
 	
-	sendQuery(keyFatura, categEValorFaturaProximoMes, handleFaturaResponse);
+	sendQuery(keyFatura, categEValorFaturaMesAtual, handleFaturaResponse);
 }
 
 function handleFaturaResponse(response) {
@@ -27,7 +27,7 @@ function handleFaturaResponse(response) {
 	
 //	desenhaTabela(dbFatura, 'tablediv1');
 	
-	sendQuery(keyCategoria, categEValorCategoriaDiasCorridos, handleCategoriaResponse);
+	sendQuery(keyCategoria, categEValorCategoriaMesCompleto, handleCategoriaResponse);
 }
 
 function handleCategoriaResponse(response) {
@@ -41,7 +41,7 @@ function handleCategoriaResponse(response) {
 	var chart = new google.visualization.BarChart(document.getElementById('tablediv1'));
     
 	/* Exibe o Grafico */
-	chart.draw(dtResult, {width: 400, height: 400});
+	chart.draw(dtResult, {width: 400, height: 240, min: 0, isStacked: false});
 	
 //	desenhaTabela(dtResult, 'tablediv1');
 	
