@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>request gg</title>
+		<script src="http://www.google.com/jsapi" type="text/javascript"></script>
+		<script src="queries.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+google.load("visualization", "1", {packages:["barchart","table"]});
+google.setOnLoadCallback(inicioExecucao);
+var gadgetHelper = null;
+
+function inicioExecucao(){
+	var dbFatura = null;
+	var dbCategoria = null; 
+
+	gadgetHelper = new google.visualization.GadgetHelper();
+	
+	sendQuery(keyFatura, categEValorFaturaProximoMes, handleFaturaResponse);
+}
+
+function handleFaturaResponse(response) {
+	if (!gadgetHelper.validateResponse(response)) return;
+	dbFatura = response.getDataTable();
+	
+//	desenhaTabela(dbFatura, 'tablediv1');
+	
+	sendQuery(keyCategoria, categEValorCategoriaDiasCorridos, handleCategoriaResponse);
+}
+
+function handleCategoriaResponse(response) {
+	if (!gadgetHelper.validateResponse(response)) return;
+	dbCategoria = response.getDataTable();
+	
+	/* Faz o Join */
+	var dtResult = new google.visualization.data.join(dbFatura, dbCategoria, 'left', [[0,0]], [1], [1]);
+	
+	/* Cria o Grafico */
+	var chart = new google.visualization.BarChart(document.getElementById('tablediv1'));
+    
+	/* Exibe o Grafico */
+	chart.draw(dtResult, {width: 450, height: 450, min: 0, isStacked: false});
+	
+//	desenhaTabela(dtResult, 'tablediv1');
+	
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+
+function desenhaTabela(data, div){
+	desenhaTabela(data, div, {sortColumn: 1});
+}
+
+function desenhaTabela(data, div, sort){
+	if (sort == null){
+		sort = {sortColumn: 1};
+	}
+	var view = new google.visualization.DataView(data);
+	var table = new google.visualization.Table(document.getElementById(div));
+	table.draw(view, sort);
+}
+
+function sendQuery(key, strQuery, callback) {
+  var urlGoogle = "http://spreadsheets.google.com/a/google.com/tq";
+  var query = new google.visualization.Query(urlGoogle+"?key="+key);
+  query.setQuery(strQuery);
+  query.send(callback);
+}
+
+</script>
+    </head>
+    <body>
+
+	<div id="tablediv1" style="overflow: auto;"><img src="http://www.google.com/ig/images/spinner.gif" /></div>
+	<!--div id="tablediv2" style="overflow: auto;"><img src="http://www.google.com/ig/images/spinner.gif" /></div-->
+
+    </body>
+</html>
+
